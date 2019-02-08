@@ -1,0 +1,17 @@
+# zbuduj embeddings
+./fasttext  skipgram -input rdata/texts_for_emb.txt -output rdata/emb200ft -minn 2 -epoch 300 -thread 4 -dim 200
+
+#zbuduj model
+./fasttext supervised -input rdata/fasttext_train_set.txt -output rdata/model_pred -epoch 200 -pretrainedVectors rdata/model.vec -dim 200
+
+#wykonaj predykcjê
+./fasttext predict rdata/model_pred.bin rdata/fasttext_val_set.txt > rdata/predictions.txt
+
+# 0.39 0.32 0.36
+./fasttext supervised -input rdata/fasttext_train_set.txt -output rdata/model_pred -epoch 300 -thread 4 -pretrainedVectors rdata/emb200ft.vec -dim 200 -wordNgrams 3
+
+# 0.39 0.34 0.37
+./fasttext supervised -input rdata/fasttext_train_set.txt -output rdata/model_pred -epoch 200 -thread 4 -pretrainedVectors rdata/emb200ft.vec -dim 200 -wordNgrams 2 -lr 0.2
+
+# 0.38 0.32 0.36
+./fasttext supervised -input rdata/fasttext_train_set.txt -output rdata/model_pred -epoch 150 -thread 4 -pretrainedVectors rdata/model.vec -dim 70 -wordNgrams 2 -lr 0.2
